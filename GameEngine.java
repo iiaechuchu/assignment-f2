@@ -11,18 +11,16 @@ import java.util.Iterator;
 import javax.swing.Timer;
 
 
-public class GameEngine implements KeyListener {
-	
-	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-
-	private double difficulty = 0.1;
-
+public class GameEngine implements KeyListener, GameReporter{
 	GamePanel gp;
 		
+	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
 	private SpaceShip v;	
 	
 	private Timer timer;
 	
+	private long score = 0;
+	private double difficulty = 0.1;
 	
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
@@ -45,7 +43,11 @@ public class GameEngine implements KeyListener {
 		timer.start();
 	}
 	
-
+	private void generateEnemy(){
+		Enemy e = new Enemy((int)(Math.random()*390), 30);
+		gp.sprites.add(e);
+		enemies.add(e);
+	}
 	
 	private void process(){
 		if(Math.random() < difficulty){
@@ -60,11 +62,11 @@ public class GameEngine implements KeyListener {
 			if(!e.isAlive()){
 				e_iter.remove();
 				gp.sprites.remove(e);
-				
+				score += 100;
 			}
 		}
 		
-		gp.updateGameUI();
+		gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
 		Rectangle2D.Double er;
@@ -76,36 +78,40 @@ public class GameEngine implements KeyListener {
 			}
 		}
 	}
-
-	private void generateEnemy(){
-		Enemy e = new Enemy((int)(Math.random()*390), 30);
-		gp.sprites.add(e);
-		enemies.add(e);
-	}
 	
+	public void die(){
+		timer.stop();
+		gp.updateGameUI();
+	}
 	
 	void controlVehicle(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
-			v.move(-1);
+			v.move(-1,0);
 			break;
 		case KeyEvent.VK_RIGHT:
-			v.move(1);
+			v.move(1,0);
 			break;
-		case KeyEvent.VK_D:
-			//difficulty += 0.1;
+		case KeyEvent.VK_UP:
+			v.move(0,-1);
+			break;
+		case KeyEvent.VK_DOWN:
+			v.move(0,1);
+			break;
+		case KeyEvent.VK_E:
+			difficulty += 0.1;
 			break;
 		}
 	}
 
-
-	public void die(){
-		timer.stop();
+	public long getScore(){
+		return score;
 	}
-
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		controlVehicle(e);
+		
 	}
 
 	@Override
