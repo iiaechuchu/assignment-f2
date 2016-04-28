@@ -27,4 +27,6 @@ public class SpaceShip extends Sprite{
 			x = 400 - width;
 	}
 
+
+
 }

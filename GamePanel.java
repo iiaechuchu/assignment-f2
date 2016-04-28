@@ -20,6 +20,7 @@ public class GamePanel extends JPanel {
 		big.setBackground(Color.BLACK);
 	}
 
+
 	public void updateGameUI(){
 		big.clearRect(0, 0, 400, 600);
 		
