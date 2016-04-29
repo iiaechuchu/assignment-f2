@@ -33,7 +33,7 @@ public class Attack extends Sprite{
 	
 	public boolean isAlive(){
 		return alive;
-	}
+	} 
 	
 
 }

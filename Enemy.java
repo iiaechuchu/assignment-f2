@@ -24,7 +24,7 @@ public class Enemy extends Sprite{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 
 					(float)(Y_TO_DIE - y)/(Y_TO_DIE - Y_TO_FADE)));
 		}
-		g.setColor(Color.YELLOW);
+		g.setColor(Color.BLUE);
 		g.fillRect(x, y, width, height);
 		
 	}
@@ -39,7 +39,7 @@ public class Enemy extends Sprite{
 	public void changestateenemy(){
 		alive = false;
 	}
-	
+
 	public boolean isAlive(){
 		return alive;
 	}
