@@ -15,10 +15,15 @@ public class GameEngine implements KeyListener, GameReporter{
 	GamePanel gp;
 		
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
-	private SpaceShip v;	
+	private SpaceShip v;
+	private ArrayList<Attack> shootings = new ArrayList<Attack>();	
 	
 	private Timer timer;
 	
+	private int positionitem;
+	private int position1;
+	private int position2;
+
 	private long score = 0;
 	private double difficulty = 0.1;
 	
@@ -50,9 +55,16 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 	
 	private void process(){
+
 		if(Math.random() < difficulty){
+			position1=(int)(Math.random()*380);
 			generateEnemy();
+
+			position2=(int)(Math.random()*380);
+			
+			positionitem=(int)(Math.random()*6000);
 		}
+
 		
 		Iterator<Enemy> e_iter = enemies.iterator();
 		while(e_iter.hasNext()){
@@ -64,20 +76,48 @@ public class GameEngine implements KeyListener, GameReporter{
 				gp.sprites.remove(e);
 				score += 100;
 			}
+				
 		}
+		
+		
+        Iterator<Attack> s_iter = shootings.iterator();
+        while(s_iter.hasNext()){
+            Attack s = s_iter.next();
+            s.proceed();
+        }
+
 		
 		gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
 		Rectangle2D.Double er;
+		Rectangle2D.Double sr;
+		Rectangle2D.Double br;
+		Rectangle2D.Double tr;
+
+
+
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				die();
-				return;
+				e.changestateenemy();
+				score -= 1000;
+				if(score==0||score<0){
+						die();
+						return;
+				}
+				
+			}
+			for(Attack s : shootings){
+				sr = s.getRectangle();
+				if(sr.intersects(er)){
+					e.changestateenemy();
+					return;
+				}	
 			}
 		}
-	}
+	}	
+	
 	
 	public void die(){
 		timer.stop();
@@ -101,8 +141,19 @@ public class GameEngine implements KeyListener, GameReporter{
 		case KeyEvent.VK_E:
 			difficulty += 0.1;
 			break;
+		case KeyEvent.VK_B:
+			fire();
+			break;
 		}
 	}
+
+
+	public void fire(){
+            Attack s = new Attack((v.x) + 8 , v.y);
+            gp.sprites.add(s);
+            shootings.add(s);
+    }
+
 
 	public long getScore(){
 		return score;
